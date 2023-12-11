@@ -17,6 +17,25 @@ class EventsManager:
     def __init__(self):
         self.events = []  # Initialize an empty list to store events
 
+    def save_events_to_file(self, file_name):
+        with open(file_name, 'w') as file:
+            for event in self.events:
+                file.write(f"{event.name},{event.date},{event.time},{event.duration}\n")
+
+    def load_events_from_file(self, file_name):
+        self.events = []  # Clear existing events before loading from the file
+        try:
+            with open(file_name, 'r') as file:
+                for line in file:
+                    event_data = line.strip().split(',')
+                    if len(event_data) == 4:
+                        name, date, time, duration = event_data
+                        self.create_event(name, date, time, duration)
+        except FileNotFoundError:
+            # Handle the case where the file doesn't exist
+            with open(file_name, 'x') as file:
+                for event in self.events:
+                    file.write(f"{event.name},{event.date},{event.time},{event.duration}\n")
     def create_event(self, name, date, time, duration):
         new_event = Event(name, date, time, duration)
         self.events.append(new_event)
@@ -193,6 +212,13 @@ class CalendarController:
 
         self.events_manager.create_event(name,date,start_time,duration)
     }
+
+    def save_events(self, file_name):
+        self.events_manager.save_events_to_file(file_name)
+
+    def load_events(self, file_name):
+        self.events_manager.load_events_from_file(file_name)
+        self.view.refresh_calendar()  # Refresh the calendar view after loading events
     def prev_month(self):
         self.view.current_month -= 1
         if self.view.current_month == 0:
@@ -225,10 +251,15 @@ def main():
     calendar_view = CalendarView(root, calendar, events_manager)
     calendar_controller = CalendarController(calendar, calendar_view, events_manager)
 
+    file_name = "events_data.txt"  # File name to save/load events
+    calendar_controller.load_events(file_name)  # Load events when the application starts
+
     # Set the view's controller
     calendar_view.set_controller(calendar_controller)
     # Initialize the GUI and start the application
     root.mainloop()
+    calendar_controller.save_events(file_name)
+
 
 
 if __name__ == "__main__":
