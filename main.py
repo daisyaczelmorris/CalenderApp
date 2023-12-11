@@ -143,6 +143,19 @@ class CalendarView:
         first_day = datetime(self.current_year, self.current_month, 1)
         weekday = first_day.weekday()
 
+        # Create labels for displaying year, month, and days of the week
+        year_label = tk.Label(self.calendar_frame, text=f"{self.current_year}", font=("Arial", 16))
+        year_label.grid(row=0, column=0, columnspan=7)
+
+        month_label = tk.Label(self.calendar_frame, text=f"{first_day.strftime('%B')}", font=("Arial", 14))
+        month_label.grid(row=1, column=0, columnspan=7)
+
+        days_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        for i, day in enumerate(days_of_week):
+            label_day = tk.Label(self.calendar_frame, text=day)
+            label_day.grid(row=2, column=i)
+
+        # Display calendar days
         for row in range(6):  # Assuming maximum 6 rows for a month layout
             for col in range(7):
                 day_number = (row * 7) + col + 1 - weekday
@@ -150,7 +163,7 @@ class CalendarView:
                 if 1 <= day_number <= days_in_month:
                     date_text = f"{self.current_year}-{self.current_month:02d}-{day_number:02d}"
                     date_box = tk.Frame(self.calendar_frame, width=120, height=120, borderwidth=1, relief="solid")
-                    date_box.grid(row=row, column=col, padx=5, pady=5)
+                    date_box.grid(row=row + 3, column=col, padx=5, pady=5)  # Adjust row index for days
 
                     label_date = tk.Label(date_box, text=f"{day_number}", font=("Arial", 12))
                     label_date.pack(pady=20)
