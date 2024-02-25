@@ -10,8 +10,9 @@ from checkinggoogle.main import main as google
 def main():
     # Create instances of the models
     calendar = Calendar()
-    events_manager = EventsManager()
-    #google()
+    google_events=google()
+
+    events_manager = EventsManager(google_events)
 # Create instances of the view and controller
     root = tk.Tk()
     calendar_view = CalendarView(root, calendar, events_manager)

@@ -80,15 +80,25 @@ class CalendarView:
 
         # Create labels for displaying year, month, and days of the week
         year_label = tk.Label(self.calendar_frame, text=f"{self.current_year}", font=("Arial", 16))
-        year_label.grid(row=0, column=0, columnspan=7)
+        year_label.grid(row=0, column=0, columnspan=8, sticky="nsew")
 
         month_label = tk.Label(self.calendar_frame, text=f"{first_day.strftime('%B')}", font=("Arial", 14))
-        month_label.grid(row=1, column=0, columnspan=7)
+        month_label.grid(row=1, column=0, columnspan=8, sticky="nsew")
 
         days_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         for i, day in enumerate(days_of_week):
-            label_day = tk.Label(self.calendar_frame, text=day)
-            label_day.grid(row=2, column=i)
+            label_day = tk.Label(self.calendar_frame, text=day, font=("Arial", 12))
+            label_day.grid(row=2, column=i, sticky="nsew")
+
+        # Determine the width and height of each cell
+        cell_width = 150
+        cell_height = 100
+
+        # Configure grid layout to ensure all cells are the same size
+        for i in range(6):  # Rows
+            self.calendar_frame.grid_rowconfigure(i + 3, minsize=cell_height)
+        for i in range(7):  # Columns
+            self.calendar_frame.grid_columnconfigure(i, minsize=cell_width)
 
         # Display calendar days
         for row in range(6):  # Assuming maximum 6 rows for a month layout
@@ -97,21 +107,30 @@ class CalendarView:
 
                 if 1 <= day_number <= days_in_month:
                     date_text = f"{self.current_year}-{self.current_month:02d}-{day_number:02d}"
-                    date_box = tk.Frame(self.calendar_frame, width=120, height=120, borderwidth=1, relief="solid")
-                    date_box.grid(row=row + 3, column=col, padx=5, pady=5)  # Adjust row index for days
+                    date_box = tk.Frame(self.calendar_frame, width=cell_width, height=cell_height, borderwidth=1,
+                                        relief="solid")
+                    date_box.grid(row=row + 3, column=col, padx=5, pady=5, sticky="nsew")  # Adjust row index for days
 
-                    label_date = tk.Label(date_box, text=f"{day_number}", font=("Arial", 12))
-                    label_date.pack(pady=20)
+                    # Label to display the date
+                    label_date = tk.Label(date_box, text=f"{day_number}", font=("Arial", 12),
+                                          wraplength=cell_width - 10)
+                    label_date.grid(row=0, column=0, sticky="nw", padx=5, pady=5)
 
+                    # Label to display events (if any)
                     events_on_day = self.get_events_for_date(date_text)
                     if events_on_day:
-                        event_texts = "\n".join([f"{event.name} - {event.time}" for event in events_on_day])
-                        label_events = tk.Label(date_box, text=event_texts, justify=tk.LEFT, wraplength=110,
+                        event_texts = "\n".join([f"{event.name}" for event in events_on_day])
+                        label_events = tk.Label(date_box, text=event_texts, justify=tk.LEFT, wraplength=cell_width - 10,
                                                 font=("Arial", 10))
-                        label_events.pack(pady=5)
+                        label_events.grid(row=1, column=0, sticky="nw", padx=5, pady=5)
+
+        # Create spare container for future development
+        spare_container = tk.Frame(self.calendar_frame, width=cell_width, height=cell_height, borderwidth=1,
+                                   relief="solid")
+        spare_container.grid(row=3, column=7, rowspan=6, padx=5, pady=5, sticky="nsew")
 
     def get_events_for_date(self, date):
-        return [event for event in self.events_manager.events if event.date == date]
+        return [event for event in self.events_manager.allEvents if event.date == date]
 
     def refresh_calendar(self):
         for widget in self.calendar_frame.winfo_children():
