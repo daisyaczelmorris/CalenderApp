@@ -3,14 +3,16 @@ import tkinter as tk
 from calendarModel import Calendar
 from calendarView import CalendarView
 from calenderController import CalendarController, EventsManager
-
+import sys
+sys.path.append("..")  # Add parent folder to sys.path
+from checkinggoogle.main import main as google
 
 def main():
     # Create instances of the models
     calendar = Calendar()
     events_manager = EventsManager()
-
-    # Create instances of the view and controller
+    #google()
+# Create instances of the view and controller
     root = tk.Tk()
     calendar_view = CalendarView(root, calendar, events_manager)
     calendar_controller = CalendarController(calendar, calendar_view, events_manager)
