@@ -57,7 +57,7 @@ class CalendarView:
         if name and date and start_time and duration:
             # Call controller function to add the event
             self.controller.add_event(name, date, start_time, duration)
-            window.destroy()
+          #  window.destroy()
             self.refresh_calendar()  # Refresh the calendar to display the newly added event
 
     def set_controller(self, controller):

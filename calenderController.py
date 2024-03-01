@@ -122,6 +122,7 @@ class EventsManager:
     def create_event(self, name, date, time, duration):
         new_event = Event(name, date, time, duration)
         self.events.append(new_event)
+        self.allEvents.append(new_event)
         return new_event
 
     def read_event(self, index):
