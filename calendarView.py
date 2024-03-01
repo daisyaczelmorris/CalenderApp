@@ -1,6 +1,8 @@
 import tkinter  as tk
-
 from datetime import datetime, timedelta
+
+from dayModel import DayModel
+
 
 class CalendarView:
     def __init__(self, root, calendar, events_manager):
@@ -8,8 +10,10 @@ class CalendarView:
         self.calendar = calendar
         self.controller = None
         self.root.title("Calendar Display")
-        self.events_manager = events_manager
+        self.dayModel=DayModel()
 
+
+        self.events_manager = events_manager
         self.current_date = datetime.now()
         self.current_year = self.current_date.year
         self.current_month = self.current_date.month
@@ -18,6 +22,7 @@ class CalendarView:
         self.calendar_frame.pack()
 
         self.display_calendar()
+
 
     def add_event_popup(self):
         event_window = tk.Toplevel(self.root)
@@ -71,7 +76,7 @@ class CalendarView:
 
         self.add_event_button = tk.Button(self.root, text="Add Event", command=self.add_event_popup)
         self.add_event_button.pack(side=tk.RIGHT)
-        # set button for add event set pop up for add event
+
 
     def display_calendar(self):
         days_in_month = self.calendar.days_in_month(self.current_year, self.current_month)
@@ -124,10 +129,13 @@ class CalendarView:
                                                 font=("Arial", 10))
                         label_events.grid(row=1, column=0, sticky="nw", padx=5, pady=5)
 
+                    # Bind click event to the date box
+                    date_box.bind("<Button-1>", lambda event, date=date_text: self.on_date_clicked(date))
+
         # Create spare container for future development
-        spare_container = tk.Frame(self.calendar_frame, width=cell_width, height=cell_height, borderwidth=1,
+        self.spare_container = tk.Frame(self.calendar_frame, width=cell_width, height=cell_height, borderwidth=1,
                                    relief="solid")
-        spare_container.grid(row=3, column=7, rowspan=6, padx=5, pady=5, sticky="nsew")
+        self.spare_container.grid(row=3, column=7, rowspan=6, padx=5, pady=5, sticky="nsew")
 
     def get_events_for_date(self, date):
         return [event for event in self.events_manager.allEvents if event.date == date]
@@ -136,4 +144,21 @@ class CalendarView:
         for widget in self.calendar_frame.winfo_children():
             widget.destroy()
         self.display_calendar()
+    def on_date_clicked(self,date):
+        self.dayModel.date=date
+        for e in self.events_manager.allEvents:
+            print(e.date+" "+date)
+            if e.date==date:
+                self.dayModel.events.append(e)
+        self.show_day()
+    def show_day(self):
+        self.refresh_calendar()
+        day_label = tk.Label(self.spare_container, text=f"{self.dayModel.date}", font=("Arial", 16))
+        day_label.pack()
+    # Display date
+        day_label = tk.Label(self.spare_container, text=f"{self.dayModel.date}", font=("Arial", 16))
+        day_label.grid(row=0, column=0, columnspan=2)
+
+
+
 

@@ -1,15 +1,13 @@
 from calendarModel import Event
 from datetime import datetime, timedelta
-
 class CalendarController:
     def __init__(self, calendar, view, event_manager):
         self.calendar = calendar
         self.view = view
         self.events_manager = event_manager
-    def add_event(self,name,date,start_time,duration):{
 
-        self.events_manager.create_event(name,date,start_time,duration)
-    }
+    def add_event(self, name, date, start_time, duration):
+        self.events_manager.create_event(name, date, start_time, duration)
 
     def save_events(self, file_name):
         self.events_manager.save_events_to_file(file_name)
@@ -18,6 +16,7 @@ class CalendarController:
         self.events_manager.load_events_from_file(file_name)
         self.events_manager.load_events_from_google()
         self.view.refresh_calendar()  # Refresh the calendar view after loading events
+
     def prev_month(self):
         self.view.current_month -= 1
         if self.view.current_month == 0:
@@ -41,11 +40,12 @@ class CalendarController:
         self.view.refresh_calendar()
 
 
+
 class EventsManager:
-    def __init__(self,google_events):
-        self.google_events=google_events
-        self.google_events_list=[]
-        self.allEvents=[]
+    def __init__(self, google_events):
+        self.google_events = google_events
+        self.google_events_list = []
+        self.allEvents = []
         self.events = []  # Initialize an empty list to store events
 
     def load_events_from_google(self):
@@ -150,3 +150,7 @@ class EventsManager:
 
     def list_events(self):
         return self.events
+    def on_date_clicked(self, date):
+        # Implement the logic to handle the click event for the selected date
+        print("Clicked on date:", date)
+        # You can implement logic here to update the day view with the selected date
