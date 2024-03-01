@@ -10,8 +10,7 @@ class DayModel:
     def update(self):
         for hour in self.hours:
             self.schedule[hour] = []  # Initialize an empty list for each hour
-
-            events_in_hour = [event for event in self.events if event.time[:2] == hour]
+            events_in_hour = [event for event in self.events if event.time[:2] == hour[:2] ]
             self.schedule[hour] = events_in_hour
         
 

@@ -145,20 +145,30 @@ class CalendarView:
             widget.destroy()
         self.display_calendar()
     def on_date_clicked(self,date):
+        self.dayModel.events=[]
         self.dayModel.date=date
         for e in self.events_manager.allEvents:
-            print(e.date+" "+date)
             if e.date==date:
                 self.dayModel.events.append(e)
         self.dayModel.update()
         self.show_day()
+
     def show_day(self):
         self.refresh_calendar()
         day_label = tk.Label(self.spare_container, text=f"{self.dayModel.date}", font=("Arial", 16))
         day_label.pack()
-        for hours in self.dayModel.hours:
-            day_label = tk.Label(self.spare_container, text=f"{hours}", font=("Arial", 10))
-            day_label.pack(anchor="w")
+        print(self.dayModel.schedule)
+        for k, v in self.dayModel.schedule.items():
+            print(v)
+            if len(v)==0:
+                day_label = tk.Label(self.spare_container, text=f"{k}", font=("Arial", 10))
+                day_label.pack(anchor="w")
+            else:
+                string=""
+                for event in v:
+                    string+=event.name
+                day_label = tk.Label(self.spare_container, text=f"{k}"+": "+string, font=("Arial", 10))
+                day_label.pack(anchor="w")
 
 
 
