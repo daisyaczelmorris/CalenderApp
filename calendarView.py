@@ -150,14 +150,17 @@ class CalendarView:
             print(e.date+" "+date)
             if e.date==date:
                 self.dayModel.events.append(e)
+        self.dayModel.update()
         self.show_day()
     def show_day(self):
         self.refresh_calendar()
         day_label = tk.Label(self.spare_container, text=f"{self.dayModel.date}", font=("Arial", 16))
         day_label.pack()
-    # Display date
-        day_label = tk.Label(self.spare_container, text=f"{self.dayModel.date}", font=("Arial", 16))
-        day_label.grid(row=0, column=0, columnspan=2)
+        for hours in self.dayModel.hours:
+            day_label = tk.Label(self.spare_container, text=f"{hours}", font=("Arial", 10))
+            day_label.pack(anchor="w")
+
+
 
 
 
