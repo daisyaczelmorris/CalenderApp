@@ -10,11 +10,11 @@ from dayModel import DayModel
 from dayView import DayView
 
 sys.path.append("..")  # Add parent folder to sys.path
-from checkinggoogle.main import main as google
+#from checkinggoogle.main import main as google
 
 def main():
     calendar = Calendar()
-    google_events = google()
+    google_events =None
 
     events_manager = EventsManager(google_events)
     root = tk.Tk()
