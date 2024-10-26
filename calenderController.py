@@ -49,14 +49,15 @@ class EventsManager:
         self.events = []  # Initialize an empty list to store events
 
     def load_events_from_google(self):
-        for e in self.google_events:
-            event_name = e.get('summary', 'No Name')
-            start_time = e['start'].get('dateTime', e['start'].get('date'))
-            date = start_time.split('T')[0]  # Extract date part
-            time = start_time.split('T')[1][:5]  # Extract time part (HH:MM format)
-            duration = self.calculate_event_duration(e['start'], e['end'])
-            newEvent=Event(event_name,date,time,duration)
-            self.google_events_list.append(newEvent)
+        if self.google_events!=None:
+            for e in self.google_events:
+                event_name = e.get('summary', 'No Name')
+                start_time = e['start'].get('dateTime', e['start'].get('date'))
+                date = start_time.split('T')[0]  # Extract date part
+                time = start_time.split('T')[1][:5]  # Extract time part (HH:MM format)
+                duration = self.calculate_event_duration(e['start'], e['end'])
+                newEvent=Event(event_name,date,time,duration)
+                self.google_events_list.append(newEvent)
 
         self.allEvents = self.events+self.google_events_list
 

@@ -4,6 +4,28 @@ from datetime import datetime, timedelta
 from dayModel import DayModel
 
 
+class PeriodTracker:
+    def __init__(self, start_date, cycle_length=28, menstrual_length=5, follicular_length=9, ovulatory_length=4,
+                 luteal_length=10):
+        self.start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        self.cycle_length = cycle_length
+        self.menstrual_length = menstrual_length
+        self.follicular_length = follicular_length
+        self.ovulatory_length = ovulatory_length
+        self.luteal_length = luteal_length
+
+    def get_phase(self, date):
+        days_since_start = (date - self.start_date).days % self.cycle_length
+
+        if days_since_start < self.menstrual_length:
+            return "Menstrual"
+        elif days_since_start < self.menstrual_length + self.follicular_length:
+            return "Follicular"
+        elif days_since_start < self.menstrual_length + self.follicular_length + self.ovulatory_length:
+            return "Ovulatory"
+        else:
+            return "Luteal"
+
 class CalendarView:
     def __init__(self, root, calendar, events_manager):
         self.root = root
@@ -78,11 +100,14 @@ class CalendarView:
         self.add_event_button.pack(side=tk.RIGHT)
 
 
+
     def display_calendar(self):
         days_in_month = self.calendar.days_in_month(self.current_year, self.current_month)
         first_day = datetime(self.current_year, self.current_month, 1)
         weekday = first_day.weekday()
 
+        # PeriodTracker setup (example start date: October 12, 2024)
+        period_tracker = PeriodTracker(start_date="2024-10-12")
         # Create labels for displaying year, month, and days of the week
         year_label = tk.Label(self.calendar_frame, text=f"{self.current_year}", font=("Arial", 16))
         year_label.grid(row=0, column=0, columnspan=8, sticky="nsew")
@@ -121,17 +146,26 @@ class CalendarView:
                                           wraplength=cell_width - 10)
                     label_date.grid(row=0, column=0, sticky="nw", padx=5, pady=5)
 
+                    # Determine the current date and the phase
+                    current_date = datetime(self.current_year, self.current_month, day_number)
+                    phase = period_tracker.get_phase(current_date)
+
+                    # Label to display period phase
+                    if phase:
+                        label_phase = tk.Label(date_box, text=f"{phase}", justify=tk.LEFT, wraplength=cell_width - 10,
+                                               font=("Arial", 10))
+                        label_phase.grid(row=1, column=0, sticky="nw", padx=5, pady=5)
+
                     # Label to display events (if any)
                     events_on_day = self.get_events_for_date(date_text)
                     if events_on_day:
                         event_texts = "\n".join([f"{event.name}" for event in events_on_day])
                         label_events = tk.Label(date_box, text=event_texts, justify=tk.LEFT, wraplength=cell_width - 10,
                                                 font=("Arial", 10))
-                        label_events.grid(row=1, column=0, sticky="nw", padx=5, pady=5)
+                        label_events.grid(row=2, column=0, sticky="nw", padx=5, pady=5)
 
                     # Bind click event to the date box
                     date_box.bind("<Button-1>", lambda event, date=date_text: self.on_date_clicked(date))
-
         # Create spare container for future development
         self.spare_container = tk.Frame(self.calendar_frame, width=cell_width, height=cell_height, borderwidth=1,
                                    relief="solid")
